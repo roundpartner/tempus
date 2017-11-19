@@ -4,16 +4,22 @@ import (
 	"gopkg.in/redis.v3"
 )
 
-func connect() *redis.Client {
-	client := redis.NewClient(&redis.Options{
-		Addr:     "localhost:6379",
-		Password: "", // no password set
-		DB:       0,  // use default DB
-	})
-	return client
+type Store struct {
+	client *redis.Client
 }
 
-func ping(client *redis.Client) (string, error) {
-	pong, err := client.Ping().Result()
+func New() *Store {
+	client := redis.NewClient(&redis.Options{
+		Addr:     "localhost:6379",
+		Password: "",
+		DB:       0,
+	})
+	return &Store{
+		client: client,
+	}
+}
+
+func (store *Store) Ping() (string, error) {
+	pong, err := store.client.Ping().Result()
 	return pong, err
 }

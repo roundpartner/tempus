@@ -5,8 +5,8 @@ import (
 )
 
 func TestConnectToRedis(t *testing.T) {
-	client := connect()
-	response, err := ping(client)
+	client := New()
+	response, err := client.Ping()
 	if err != nil {
 		t.Fatalf("Error %s", err.Error())
 		t.FailNow()
