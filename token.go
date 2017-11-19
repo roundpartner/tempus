@@ -7,7 +7,7 @@ import (
 
 type Token struct {
 	User  int    `json:"user_id"`
-	Type  string `json:"type"`
+	Scenario  string `json:"scenario"`
 	Token string `json:"token"`
 }
 

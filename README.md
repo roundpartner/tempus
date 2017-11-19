@@ -14,3 +14,7 @@ You can then monitor the server with
 ```bash
 docker exec tempus-redis redis-cli monitor
 ```
+# Benchmarking
+```bash
+go test -bench=.
+```
