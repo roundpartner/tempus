@@ -54,8 +54,9 @@ func (rs *RestServer) AddToken(w http.ResponseWriter, req *http.Request) {
 	token := &Token{}
 	err := decoder.Decode(token)
 	if err != nil {
-		log.Fatalf("Unable to decode request: %s", err.Error())
+		log.Printf("Unable to decode request: %s", err.Error())
 		w.WriteHeader(http.StatusBadRequest)
+		return
 	}
 
 	token = rs.Generator.Get(token.User, token.Scenario)
@@ -73,24 +74,27 @@ func (rs *RestServer) GetToken(w http.ResponseWriter, req *http.Request) {
 	params := mux.Vars(req)
 	userId, err := strconv.ParseInt(params["user_id"], 10, 64)
 	if err != nil {
-		log.Fatalf("Unable to decode request: %s\n", err.Error())
+		log.Printf("Unable to decode request: %s\n", err.Error())
 		w.WriteHeader(http.StatusBadRequest)
 	}
 
 	token, err := rs.Store.Get(params["token"])
 	if err != nil {
-		log.Fatalf("Unable to get token: %s\n", err.Error())
+		log.Printf("Unable to get token: %s\n", err.Error())
 		w.WriteHeader(http.StatusBadRequest)
+		return
 	}
 
 	if token == nil {
-		log.Fatalf("Token not found: %d %s\n", userId, params["token"])
+		log.Printf("Token not found: %d/%s\n", userId, params["token"])
 		w.WriteHeader(http.StatusNotFound)
+		return
 	}
 
 	if userId != token.User {
-		log.Fatalf("User does not match: %d != %d\n", userId, token.User)
+		log.Printf("User does not match: %d != %d\n", userId, token.User)
 		w.WriteHeader(http.StatusNotFound)
+		return
 	}
 
 	data, _ := token.MarshalBinary()
