@@ -24,9 +24,9 @@ func (generator *TokenGenerator) run() {
 	}()
 }
 
-func (generator *TokenGenerator) Get(user int, scenario string) *Token {
+func (generator *TokenGenerator) Get(user int64, scenario string) *Token {
 	token := &Token{User: user, Scenario: scenario}
-	token.Token = <- generator.Tokens
+	token.Token = <-generator.Tokens
 	return token
 }
 

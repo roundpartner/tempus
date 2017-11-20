@@ -21,7 +21,7 @@ func TestConnectToRedis(t *testing.T) {
 func TestStoreATokenInRedis(t *testing.T) {
 	client := New()
 	token := &Token{1, "email", "hello_world"}
-	err := client.Add(token, time.Second)
+	err := client.Add(token, time.Minute)
 	if err != nil {
 		t.Fatalf("Error %s", err.Error())
 		t.FailNow()
@@ -33,6 +33,19 @@ func TestGetTokenFromRedis(t *testing.T) {
 	_, err := client.Get("hello_world")
 	if err != nil {
 		t.Fatalf("Error %s", err.Error())
+		t.FailNow()
+	}
+}
+
+func TestTokenExpiresAfterGet(t *testing.T) {
+	client := New()
+	token, err := client.Get("hello_world")
+	if err != nil {
+		t.Fatalf("Error %s", err.Error())
+		t.FailNow()
+	}
+	if token != nil {
+		t.Fatalf("Token has not expired")
 		t.FailNow()
 	}
 }

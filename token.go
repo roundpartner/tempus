@@ -1,14 +1,14 @@
 package main
 
 import (
-	"encoding/json"
 	"bytes"
+	"encoding/json"
 )
 
 type Token struct {
-	User  int    `json:"user_id"`
-	Scenario  string `json:"scenario"`
-	Token string `json:"token"`
+	User     int64  `json:"user_id"`
+	Scenario string `json:"scenario"`
+	Token    string `json:"token"`
 }
 
 func (token *Token) MarshalBinary() (data []byte, err error) {

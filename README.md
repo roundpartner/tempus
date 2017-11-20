@@ -3,6 +3,17 @@
 # Tempus
 Micro Service for generating time based keys
 
+# Usage
+```bash
+curl localhost:7373 -d "{\"user_id\":1,\"scenario\":\"test\"}"
+```
+
+> {"user_id":1,"scenario":"test","token":"2b73bb3213da2f0627f492b741bdeb491a43d0f392176981e4138924147ca0d7"}
+
+```bash
+curl localhost:7373/1/2b73bb3213da2f0627f492b741bdeb491a43d0f392176981e4138924147ca0d7
+```
+
 # Testing
 You will need redis to run tests
 ## Starting Redis

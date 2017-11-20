@@ -1,13 +1,14 @@
 package main
 
 import (
+	"fmt"
 	"gopkg.in/redis.v3"
 	"time"
-	"fmt"
 )
 
 type Store struct {
 	client *redis.Client
+	Delete chan *Token
 }
 
 func New() *Store {
@@ -16,9 +17,21 @@ func New() *Store {
 		Password: "",
 		DB:       0,
 	})
-	return &Store{
+	store := &Store{
 		client: client,
 	}
+	store.run()
+	return store
+}
+
+func (store *Store) run() {
+	store.Delete = make(chan *Token, 50)
+	go func() {
+		for {
+			token := <-store.Delete
+			store.client.Del(token.Key())
+		}
+	}()
 }
 
 func (store *Store) Ping() (string, error) {
@@ -39,7 +52,12 @@ func (store *Store) Add(token *Token, duration time.Duration) error {
 
 func (store *Store) Get(id string) (*Token, error) {
 	token := Token{Token: id}
+	exists, err := store.client.Exists(token.Key()).Result()
+	if !exists {
+		return nil, nil
+	}
 	data, err := store.client.Get(token.Key()).Result()
+	store.Delete <- &token
 	if err != nil {
 		return nil, err
 	}
