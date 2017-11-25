@@ -9,7 +9,7 @@ import (
 )
 
 func TestAddToken(t *testing.T) {
-	body := strings.NewReader("{\"user_id\":1,\"scenario\":\"test\"}")
+	body := strings.NewReader("{\"user_id\":\"1\",\"scenario\":\"test\"}")
 	rr := httptest.NewRecorder()
 	req, _ := http.NewRequest("POST", "/", body)
 
@@ -47,7 +47,7 @@ func TestTokenExists(t *testing.T) {
 		t.FailNow()
 	}
 
-	if "{\"user_id\":2,\"scenario\":\"test\",\"token\":\""+token.Token+"\"}" != rr.Body.String() {
+	if "{\"user_id\":\"2\",\"scenario\":\"test\",\"token\":\""+token.Token+"\"}" != rr.Body.String() {
 		t.Fatalf("Unexpected Response: %s", rr.Body.String())
 		t.FailNow()
 	}

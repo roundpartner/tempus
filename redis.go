@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"gopkg.in/redis.v3"
 	"time"
+	"errors"
 )
 
 type Store struct {
@@ -50,14 +51,25 @@ func (store *Store) Add(token *Token, duration time.Duration) error {
 	return nil
 }
 
-func (store *Store) Get(id string) (*Token, error) {
+func (store *Store) Get(id string, fn validate) (*Token, error) {
+	token, err := store.get(id)
+	if err != nil || token == nil {
+		return nil, err
+	}
+	if !fn(token) {
+		return nil, errors.New("token did not validate")
+	}
+	store.Delete <- token
+	return token, err
+}
+
+func (store *Store) get(id string) (*Token, error) {
 	token := Token{Token: id}
 	exists, err := store.client.Exists(token.Key()).Result()
 	if !exists {
 		return nil, nil
 	}
 	data, err := store.client.Get(token.Key()).Result()
-	store.Delete <- &token
 	if err != nil {
 		return nil, err
 	}

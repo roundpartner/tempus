@@ -78,7 +78,7 @@ func (rs *RestServer) GetToken(w http.ResponseWriter, req *http.Request) {
 		w.WriteHeader(http.StatusBadRequest)
 	}
 
-	token, err := rs.Store.Get(params["token"])
+	token, err := rs.Store.Get(params["token"], UserValidator(userId))
 	if err != nil {
 		log.Printf("Unable to get token: %s\n", err.Error())
 		w.WriteHeader(http.StatusBadRequest)
