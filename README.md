@@ -5,7 +5,7 @@ Micro Service for generating time based keys
 This service provides an end point for generating a new token that can be used to authenticate a user.
 # Usage
 ```bash
-curl localhost:7373 -d "{\"user_id\":"1",\"scenario\":\"test\"}"
+curl localhost:7373 -d "{\"user_id\":\"1\",\"scenario\":\"test\"}"
 ```
 ```json
 {"user_id":"1","scenario":"test","token":"2b73bb3213da2f0627f492b741bdeb491a43d0f392176981e4138924147ca0d7"}

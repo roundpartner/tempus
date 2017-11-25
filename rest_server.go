@@ -13,9 +13,11 @@ import (
 	"time"
 )
 
-func ListenAndServe() {
+func ListenAndServe(port int) {
+	address := fmt.Sprintf(":%d", port)
+
 	rs := NewRestServer()
-	server := &http.Server{Addr: ":7373", Handler: rs.Router}
+	server := &http.Server{Addr: address, Handler: rs.Router}
 	go func() {
 		c := make(chan os.Signal, 1)
 		signal.Notify(c, syscall.SIGTERM)
