@@ -2,7 +2,7 @@ package main
 
 import (
 	"crypto/rand"
-	"encoding/hex"
+	"encoding/base64"
 )
 
 type TokenGenerator struct {
@@ -31,7 +31,7 @@ func (generator *TokenGenerator) Get(user int64, scenario string) *Token {
 }
 
 func (generator *TokenGenerator) randomToken() string {
-	b := make([]byte, 32)
+	b := make([]byte, 48)
 	rand.Read(b)
-	return hex.EncodeToString(b)
+	return base64.URLEncoding.EncodeToString(b)
 }
