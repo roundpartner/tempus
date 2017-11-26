@@ -23,14 +23,14 @@ func ListenAndServe(port int) {
 		signal.Notify(c, syscall.SIGTERM)
 		<-c
 		signal.Stop(c)
-		fmt.Println("http: Server shutting down gracefully")
+		log.Println("Server shutting down gracefully")
 		server.Shutdown(nil)
 	}()
 
-	fmt.Println("http: Server starting")
+	log.Println("Server starting")
 	err := server.ListenAndServe()
 	if nil != err {
-		fmt.Println(err.Error())
+		log.Println(err.Error())
 	}
 }
 
@@ -61,6 +61,7 @@ func (rs *RestServer) AddToken(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
+	log.Printf("Adding %s token for user %d\n", token.Scenario, token.User)
 	token = rs.Generator.Get(token.User, token.Scenario)
 
 	rs.Store.Add(token, time.Hour*24*3)
@@ -80,6 +81,7 @@ func (rs *RestServer) GetToken(w http.ResponseWriter, req *http.Request) {
 		w.WriteHeader(http.StatusBadRequest)
 	}
 
+	log.Printf("Looking up token for user %d\n", userId)
 	token, err := rs.Store.Get(params["token"], UserValidator(userId))
 	if err != nil {
 		log.Printf("Unable to get token: %s\n", err.Error())
