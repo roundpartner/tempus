@@ -5,6 +5,7 @@ import (
 	"gopkg.in/redis.v3"
 	"time"
 	"errors"
+	"os"
 )
 
 type Store struct {
@@ -13,8 +14,10 @@ type Store struct {
 }
 
 func New() *Store {
+	host := os.Getenv("REDIS_HOST")
+
 	client := redis.NewClient(&redis.Options{
-		Addr:     "localhost:6379",
+		Addr:     host + ":6379",
 		Password: "",
 		DB:       0,
 	})
