@@ -1,11 +1,11 @@
 package main
 
 import (
+	"errors"
 	"fmt"
 	"gopkg.in/redis.v3"
-	"time"
-	"errors"
 	"os"
+	"time"
 )
 
 type Store struct {

@@ -10,7 +10,6 @@ import (
 	"os/signal"
 	"strconv"
 	"syscall"
-	"time"
 )
 
 func ListenAndServe(port int) {
@@ -64,7 +63,7 @@ func (rs *RestServer) AddToken(w http.ResponseWriter, req *http.Request) {
 	log.Printf("Adding %s token for user %d\n", token.Scenario, token.User)
 	token = rs.Generator.Get(token.User, token.Scenario)
 
-	rs.Store.Add(token, time.Hour*24*3)
+	rs.Store.Add(token, token.Expires())
 
 	data, _ := token.MarshalBinary()
 

@@ -20,7 +20,7 @@ func TestConnectToRedis(t *testing.T) {
 
 func TestStoreATokenInRedis(t *testing.T) {
 	client := New()
-	token := &Token{1, "email", "hello_world"}
+	token := &Token{User: 1, Scenario: "email", Token: "hello_world"}
 	err := client.Add(token, time.Minute)
 	if err != nil {
 		t.Fatalf("Error %s", err.Error())
@@ -60,7 +60,7 @@ func TestTokenExpiresAfterGet(t *testing.T) {
 
 func TestTokenPersistsIfValidatorFails(t *testing.T) {
 	client := New()
-	token := &Token{3, "email", "persistent_token"}
+	token := &Token{User: 3, Scenario: "email", Token: "persistent_token"}
 	client.Add(token, time.Minute)
 	token, err := client.Get("persistent_token", failValidation)
 	if err == nil {

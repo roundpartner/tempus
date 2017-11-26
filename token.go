@@ -3,6 +3,13 @@ package main
 import (
 	"bytes"
 	"encoding/json"
+	"time"
+)
+
+const (
+	DAY      = time.Hour * 24
+	PASSWORD = DAY * 3
+	EMAIL    = DAY * 7
 )
 
 type Token struct {
@@ -23,4 +30,11 @@ func (token *Token) UnmarshalBinary(data []byte) error {
 
 func (token *Token) Key() string {
 	return "tempus_" + token.Token
+}
+
+func (token *Token) Expires() time.Duration {
+	if "email" == token.Scenario {
+		return EMAIL
+	}
+	return PASSWORD
 }
