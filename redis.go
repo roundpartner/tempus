@@ -2,7 +2,6 @@ package main
 
 import (
 	"errors"
-	"fmt"
 	"gopkg.in/redis.v3"
 	"os"
 	"time"
@@ -49,7 +48,7 @@ func (store *Store) Add(token *Token, duration time.Duration) error {
 		return err
 	}
 	if !success {
-		return fmt.Errorf("token was not stored")
+		return errors.New("token was not stored")
 	}
 	return nil
 }

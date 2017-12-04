@@ -14,6 +14,9 @@ curl localhost:7373 -d "{\"user_id\":\"1\",\"scenario\":\"test\"}"
 curl localhost:7373/1/2b73bb3213da2f0627f492b741bdeb491a43d0f392176981e4138924147ca0d7
 ```
 
+```json
+{"user_id":"1","scenario":"test","token":"BAa-gqpESzJMy6k-oxiokPk-oJ-sejqzgmdSQ0pHXdz3dwTg9wXImWT3_hBKyhgS"}
+```
 # Testing
 You will need redis to run tests
 ## Starting Redis
