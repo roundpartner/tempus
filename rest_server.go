@@ -26,7 +26,7 @@ func ListenAndServe(port int) {
 		server.Shutdown(nil)
 	}()
 
-	log.Println("Server starting")
+	log.Printf("Server starting on port %d\n", port)
 	err := server.ListenAndServe()
 	if nil != err {
 		log.Println(err.Error())
