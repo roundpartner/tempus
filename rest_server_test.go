@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"strings"
@@ -50,5 +51,21 @@ func TestTokenExists(t *testing.T) {
 	if "{\"user_id\":\"2\",\"scenario\":\"test\",\"token\":\""+token.Token+"\"}" != rr.Body.String() {
 		t.Fatalf("Unexpected Response: %s", rr.Body.String())
 		t.FailNow()
+	}
+}
+
+func BenchmarkAddToken(b *testing.B) {
+	rs := NewRestServer()
+	for n := 0; n < b.N; n++ {
+		body := strings.NewReader(fmt.Sprintf("{\"user_id\":\"%d\",\"scenario\":\"benchmark %d\"}", n, b.N))
+		rr := httptest.NewRecorder()
+		req, _ := http.NewRequest("POST", "/", body)
+
+		rs.Router.ServeHTTP(rr, req)
+
+		if rr.Code != http.StatusOK {
+			b.Fatalf("Service did not return ok status")
+			b.FailNow()
+		}
 	}
 }
