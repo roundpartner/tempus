@@ -3,6 +3,7 @@ package main
 import (
 	"errors"
 	"gopkg.in/redis.v3"
+	"log"
 	"os"
 	"time"
 )
@@ -10,6 +11,7 @@ import (
 type Store struct {
 	client *redis.Client
 	Delete chan *Token
+	Insert chan *timedToken
 }
 
 func New() *Store {
@@ -29,10 +31,21 @@ func New() *Store {
 
 func (store *Store) run() {
 	store.Delete = make(chan *Token, 50)
+	store.Insert = make(chan *timedToken, 50)
 	go func() {
 		for {
-			token := <-store.Delete
-			store.client.Del(token.Key())
+			select {
+			case tt := <-store.Insert:
+				success, err := store.client.SetNX(tt.token.Key(), tt.token, tt.duration).Result()
+				if err != nil {
+					log.Printf("error: %s\n", err.Error())
+				}
+				if !success {
+					log.Printf("error: token was not stored\n")
+				}
+			case token := <-store.Delete:
+				store.client.Del(token.Key())
+			}
 		}
 	}()
 }
@@ -40,6 +53,11 @@ func (store *Store) run() {
 func (store *Store) Ping() (string, error) {
 	pong, err := store.client.Ping().Result()
 	return pong, err
+}
+
+type timedToken struct {
+	token    *Token
+	duration time.Duration
 }
 
 func (store *Store) Add(token *Token, duration time.Duration) error {
@@ -50,6 +68,12 @@ func (store *Store) Add(token *Token, duration time.Duration) error {
 	if !success {
 		return errors.New("token was not stored")
 	}
+	return nil
+}
+
+func (store *Store) AddLater(token *Token, duration time.Duration) error {
+	tt := &timedToken{token, duration}
+	store.Insert <- tt
 	return nil
 }
 

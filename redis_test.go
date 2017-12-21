@@ -28,6 +28,21 @@ func TestStoreATokenInRedis(t *testing.T) {
 	}
 }
 
+func TestStoreATokenInRedisLater(t *testing.T) {
+	client := New()
+	token := &Token{User: 1, Scenario: "email", Token: t.Name()}
+	err := client.AddLater(token, time.Minute)
+	if err != nil {
+		t.Fatalf("Error %s", err.Error())
+		t.FailNow()
+	}
+	_, err = client.Get(token.Token, passValidation)
+	if err != nil {
+		t.Fatalf("Error %s", err.Error())
+		t.FailNow()
+	}
+}
+
 func passValidation(_ *Token) bool {
 	return true
 }
