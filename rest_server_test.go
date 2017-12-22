@@ -34,7 +34,7 @@ func TestTokenExists(t *testing.T) {
 	rs.Store.Add(token, time.Hour)
 
 	rr := httptest.NewRecorder()
-	req, _ := http.NewRequest("GET", "/2/"+token.Token, nil)
+	req, _ := http.NewRequest("GET", "/2/"+token.Scenario+"/"+token.Token, nil)
 
 	rs.Router.ServeHTTP(rr, req)
 
@@ -49,6 +49,32 @@ func TestTokenExists(t *testing.T) {
 	}
 
 	if "{\"user_id\":\"2\",\"scenario\":\"test\",\"token\":\""+token.Token+"\"}" != rr.Body.String() {
+		t.Fatalf("Unexpected Response: %s", rr.Body.String())
+		t.FailNow()
+	}
+}
+
+func TestTokenExistsWithoutScenario(t *testing.T) {
+	rs := NewRestServer()
+	token := rs.Generator.Get(3, "test")
+	rs.Store.Add(token, time.Hour)
+
+	rr := httptest.NewRecorder()
+	req, _ := http.NewRequest("GET", "/3/"+token.Token, nil)
+
+	rs.Router.ServeHTTP(rr, req)
+
+	if rr.Code != http.StatusOK {
+		t.Fatalf("Service did not return ok status")
+		t.FailNow()
+	}
+
+	if "application/json; charset=utf-8" != rr.Header().Get("Content-Type") {
+		t.Fatalf("Service did not return json header")
+		t.FailNow()
+	}
+
+	if "{\"user_id\":\"3\",\"scenario\":\"test\",\"token\":\""+token.Token+"\"}" != rr.Body.String() {
 		t.Fatalf("Unexpected Response: %s", rr.Body.String())
 		t.FailNow()
 	}

@@ -34,6 +34,7 @@ func NewRestServer() *RestServer {
 	rs.Router = mux.NewRouter()
 	rs.Router.HandleFunc("/", rs.AddToken).Methods("POST")
 	rs.Router.HandleFunc("/{user_id}/{token}", rs.GetToken).Methods("GET")
+	rs.Router.HandleFunc("/{user_id}/{scenario}/{token}", rs.GetToken).Methods("GET")
 
 	rs.Store = New()
 	rs.Generator = NewTokenGenerator()
@@ -70,8 +71,12 @@ func (rs *RestServer) GetToken(w http.ResponseWriter, req *http.Request) {
 		w.WriteHeader(http.StatusBadRequest)
 	}
 
+	validator := UserValidator(userId)
+	if params["scenario"] != "" {
+		validator = UserScenarioValidator(userId, params["scenario"])
+	}
 	log.Printf("Looking up token for user %d\n", userId)
-	token, err := rs.Store.Get(params["token"], UserValidator(userId))
+	token, err := rs.Store.Get(params["token"], validator)
 	if err != nil {
 		log.Printf("Unable to get token: %s\n", err.Error())
 		w.WriteHeader(http.StatusBadRequest)
@@ -79,7 +84,7 @@ func (rs *RestServer) GetToken(w http.ResponseWriter, req *http.Request) {
 	}
 
 	if token == nil {
-		log.Printf("Token not found: %d/%s\n", userId, params["token"])
+		log.Printf("Token not found: %d/%s/%s\n", userId, params["scenario"], params["token"])
 		w.WriteHeader(http.StatusNotFound)
 		return
 	}
