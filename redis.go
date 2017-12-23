@@ -36,12 +36,9 @@ func (store *Store) run() {
 		for {
 			select {
 			case tt := <-store.Insert:
-				success, err := store.client.SetNX(tt.token.Key(), tt.token, tt.duration).Result()
+				err := store.Add(tt.token, tt.duration)
 				if err != nil {
 					log.Printf("error: %s\n", err.Error())
-				}
-				if !success {
-					log.Printf("error: token was not stored\n")
 				}
 			case token := <-store.Delete:
 				store.client.Del(token.Key())

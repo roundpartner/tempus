@@ -84,7 +84,11 @@ func (rs *RestServer) GetToken(w http.ResponseWriter, req *http.Request) {
 	}
 
 	if token == nil {
-		log.Printf("Token not found: %d/%s/%s\n", userId, params["scenario"], params["token"])
+		if params["scenario"] != "" {
+			log.Printf("token not found: %d/%s/%s\n", userId, params["scenario"], params["token"])
+		} else {
+			log.Printf("token not found: %d/%s\n", userId, params["token"])
+		}
 		w.WriteHeader(http.StatusNotFound)
 		return
 	}
@@ -95,7 +99,11 @@ func (rs *RestServer) GetToken(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	data, _ := token.MarshalBinary()
+	data, err := token.MarshalBinary()
+	if err != nil {
+		log.Printf("Unable to marshal token: %s\n", err.Error())
+		w.WriteHeader(http.StatusInternalServerError)
+	}
 
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
 	w.WriteHeader(http.StatusOK)

@@ -22,7 +22,7 @@ You will need redis to run tests
 ## Starting Redis
 Redis can be run locally in a container with
 ```bash
-docker run --rm --name tempus-redis -p 127.0.0.1:6379:6379 -d redis
+docker run --rm --name tempus-redis -p 127.0.0.1:6379:6379 redis
 ```
 You can then monitor the server with
 ```bash
