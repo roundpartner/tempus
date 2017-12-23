@@ -49,7 +49,7 @@ func ItemInserted(key string, token *Token, duration time.Duration) error {
 }
 
 func appendToBackUp(data []byte) error {
-	f, err := os.OpenFile("test.aob", os.O_APPEND|os.O_WRONLY, 0600)
+	f, err := os.OpenFile("test.aob", os.O_CREATE|os.O_APPEND|os.O_WRONLY, 0600)
 	defer f.Close()
 	f.Write(data)
 	f.WriteString("\n")
