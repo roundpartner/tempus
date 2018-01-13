@@ -43,20 +43,21 @@ func NewRestServer() *RestServer {
 
 func (rs *RestServer) AddToken(w http.ResponseWriter, req *http.Request) {
 	decoder := json.NewDecoder(req.Body)
-	token := &Token{}
-	err := decoder.Decode(token)
+	requestToken := &Token{}
+	err := decoder.Decode(requestToken)
 	if err != nil {
 		log.Printf("Unable to decode request: %s", err.Error())
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
 
-	log.Printf("Adding %s token for user %d\n", token.Scenario, token.User)
-	token = rs.Generator.Get(token.User, token.Scenario)
+	log.Printf("Adding %s token for user %d\n", requestToken.Scenario, requestToken.User)
+	responseToken := rs.Generator.Get(requestToken.User, requestToken.Scenario)
+	responseToken.Meta = requestToken.Meta
 
-	rs.Store.AddLater(token, token.Expires())
+	rs.Store.AddLater(responseToken, responseToken.Expires())
 
-	data, _ := token.MarshalBinary()
+	data, _ := responseToken.MarshalBinary()
 
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
 	w.WriteHeader(http.StatusOK)

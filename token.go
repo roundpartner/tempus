@@ -16,6 +16,7 @@ type Token struct {
 	User     int64  `json:"user_id,string"`
 	Scenario string `json:"scenario"`
 	Token    string `json:"token"`
+	Meta     map[string]string `json:"meta,omitempty"`
 }
 
 func (token *Token) MarshalBinary() (data []byte, err error) {

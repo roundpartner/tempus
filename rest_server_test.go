@@ -80,6 +80,60 @@ func TestTokenExistsWithoutScenario(t *testing.T) {
 	}
 }
 
+func TestAddTokenWithMeta(t *testing.T) {
+	body := strings.NewReader("{\"user_id\":\"1\",\"scenario\":\"test\",\"meta\":{\"alpha\":\"alfred\",\"beta\":\"bravo\"}}")
+	rr := httptest.NewRecorder()
+	req, _ := http.NewRequest("POST", "/", body)
+
+	rs := NewRestServer()
+	rs.Router.ServeHTTP(rr, req)
+
+	if rr.Code != http.StatusOK {
+		t.Fatalf("Service did not return ok status")
+		t.FailNow()
+	}
+
+	if "application/json; charset=utf-8" != rr.Header().Get("Content-Type") {
+		t.Fatalf("Service did not return json header")
+		t.FailNow()
+	}
+
+	if !strings.Contains(rr.Body.String(), "\"meta\":{\"alpha\":\"alfred\",\"beta\":\"bravo\"}") {
+		t.Fatalf("Unexpected Response: %s", rr.Body.String())
+		t.FailNow()
+	}
+}
+
+func TestTokenExistsWithMeta(t *testing.T) {
+	rs := NewRestServer()
+	token := rs.Generator.Get(4, "test")
+	token.Meta = make(map[string]string)
+	token.Meta["alpha"] = "alfred"
+	token.Meta["beta"] = "bravo"
+
+	rs.Store.Add(token, time.Hour)
+
+	rr := httptest.NewRecorder()
+	req, _ := http.NewRequest("GET", "/4/"+token.Token, nil)
+
+	rs.Router.ServeHTTP(rr, req)
+
+	if rr.Code != http.StatusOK {
+		t.Fatalf("Service did not return ok status")
+		t.FailNow()
+	}
+
+	if "application/json; charset=utf-8" != rr.Header().Get("Content-Type") {
+		t.Fatalf("Service did not return json header")
+		t.FailNow()
+	}
+
+	if !strings.Contains(rr.Body.String(), "\"meta\":{\"alpha\":\"alfred\",\"beta\":\"bravo\"}") {
+		t.Fatalf("Unexpected Response: %s", rr.Body.String())
+		t.FailNow()
+	}
+}
+
 func BenchmarkAddToken(b *testing.B) {
 	rs := NewRestServer()
 	for n := 0; n < b.N; n++ {
