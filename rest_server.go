@@ -32,6 +32,7 @@ type RestServer struct {
 func NewRestServer() *RestServer {
 	rs := &RestServer{}
 	rs.Router = mux.NewRouter()
+	Check(rs.Router)
 	rs.Router.HandleFunc("/", rs.AddToken).Methods("POST")
 	rs.Router.HandleFunc("/{user_id}/{token}", rs.GetToken).Methods("GET")
 	rs.Router.HandleFunc("/{user_id}/{scenario}/{token}", rs.GetToken).Methods("GET")
