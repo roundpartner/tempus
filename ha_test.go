@@ -19,6 +19,21 @@ func TestThatServiceIsUp(t *testing.T) {
 	}
 }
 
+func TestThatServiceIsDown(t *testing.T) {
+	rr := httptest.NewRecorder()
+	req, _ := http.NewRequest("GET", "/check", nil)
+
+	rs := NewRestServer()
+	rs.Router.ServeHTTP(rr, req)
+
+	serviceAvailable = false
+
+	if rr.Code != http.StatusUnauthorized {
+		t.Fatalf("Service did not return ok no content status")
+		t.FailNow()
+	}
+}
+
 func TestGetMetrics(t *testing.T) {
 	rr := httptest.NewRecorder()
 	req, _ := http.NewRequest("GET", "/metrics", nil)
