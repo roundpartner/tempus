@@ -10,6 +10,7 @@ const (
 	DAY      = time.Hour * 24
 	PASSWORD = DAY * 3
 	EMAIL    = DAY * 7
+	ROBOT    = time.Second * 5
 )
 
 type Token struct {
@@ -36,6 +37,9 @@ func (token *Token) Key() string {
 func (token *Token) Expires() time.Duration {
 	if "email" == token.Scenario {
 		return EMAIL
+	}
+	if "robot" == token.Scenario {
+		return ROBOT
 	}
 	return PASSWORD
 }

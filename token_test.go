@@ -35,3 +35,11 @@ func TestEmailTokenSetsExpiry(t *testing.T) {
 		t.FailNow()
 	}
 }
+
+func TestRobotTokenSetsExpiry(t *testing.T) {
+	token := &Token{User: 0, Scenario: "robot", Token: "hello_world"}
+	if token.Expires() != ROBOT {
+		t.Fatalf("Error: Token does not expire %d != %d", token.Expires(), ROBOT)
+		t.FailNow()
+	}
+}
