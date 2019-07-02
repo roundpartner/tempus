@@ -7,6 +7,8 @@ import (
 	"os"
 )
 
+var ServiceName = "tempus"
+
 func main() {
 	autoflags.Define(&ServerConfig)
 	flag.Parse()

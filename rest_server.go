@@ -19,7 +19,7 @@ func ListenAndServe(port int) {
 	log.Printf("Server starting on port %d\n", port)
 	err := server.ListenAndServe()
 	if nil != err {
-		log.Println(err.Error())
+		log.Printf("[INFO] [%s] %s", ServiceName, err.Error())
 	}
 }
 
