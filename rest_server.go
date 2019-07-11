@@ -16,7 +16,7 @@ func ListenAndServe(port int) {
 	server := &http.Server{Addr: address, Handler: rs.Router}
 	ShutdownGracefully(server)
 
-	log.Printf("Server starting on port %d\n", port)
+	log.Printf("Server starting on port %d", port)
 	err := server.ListenAndServe()
 	if nil != err {
 		log.Printf("[INFO] [%s] %s", ServiceName, err.Error())
