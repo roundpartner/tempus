@@ -32,3 +32,16 @@ docker exec tempus-redis redis-cli monitor
 ```bash
 go test -bench=.
 ```
+# Twelve Factor App
+- [ ] Codebase
+- [ ] Dependencies
+- [ ] Config
+- [ ] Backing services
+- [ ] Build, release, run
+- [ ] Processes
+- [ ] Port binding
+- [ ] Concurrency
+- [ ] Disposability
+- [ ] Dev/prod parity
+- [ ] Logs
+- [ ] Admin processes
