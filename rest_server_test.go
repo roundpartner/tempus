@@ -29,6 +29,7 @@ func TestAddToken(t *testing.T) {
 }
 
 func TestTokenExists(t *testing.T) {
+	MockRedisServer()
 	rs := NewRestServer()
 	token := rs.Generator.Get(2, "test")
 	rs.Store.Add(token, time.Hour)
@@ -55,6 +56,7 @@ func TestTokenExists(t *testing.T) {
 }
 
 func TestTokenExistsWithoutScenario(t *testing.T) {
+	MockRedisServer()
 	rs := NewRestServer()
 	token := rs.Generator.Get(3, "test")
 	rs.Store.Add(token, time.Hour)
@@ -105,6 +107,7 @@ func TestAddTokenWithMeta(t *testing.T) {
 }
 
 func TestTokenExistsWithMeta(t *testing.T) {
+	MockRedisServer()
 	rs := NewRestServer()
 	token := rs.Generator.Get(4, "test")
 	token.Meta = make(map[string]string)

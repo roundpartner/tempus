@@ -1,11 +1,14 @@
 package main
 
 import (
+	"github.com/alicebob/miniredis/v2"
+	"os"
 	"testing"
 	"time"
 )
 
 func TestConnectToRedis(t *testing.T) {
+	MockRedisServer()
 	client := New()
 	response, err := client.Ping()
 	if err != nil {
@@ -19,6 +22,7 @@ func TestConnectToRedis(t *testing.T) {
 }
 
 func TestStoreATokenInRedis(t *testing.T) {
+	MockRedisServer()
 	client := New()
 	token := &Token{User: 1, Scenario: "email", Token: "hello_world"}
 	err := client.Add(token, time.Minute)
@@ -29,6 +33,7 @@ func TestStoreATokenInRedis(t *testing.T) {
 }
 
 func TestStoreATokenInRedisLater(t *testing.T) {
+	MockRedisServer()
 	client := New()
 	token := &Token{User: 1, Scenario: "email", Token: t.Name()}
 	err := client.AddLater(token, time.Minute)
@@ -52,6 +57,7 @@ func failValidation(_ *Token) bool {
 }
 
 func TestGetTokenFromRedis(t *testing.T) {
+	MockRedisServer()
 	client := New()
 	_, err := client.Get("hello_world", passValidation)
 	if err != nil {
@@ -61,6 +67,7 @@ func TestGetTokenFromRedis(t *testing.T) {
 }
 
 func TestTokenExpiresAfterGet(t *testing.T) {
+	MockRedisServer()
 	client := New()
 	token, err := client.Get("hello_world", passValidation)
 	if err != nil {
@@ -74,6 +81,7 @@ func TestTokenExpiresAfterGet(t *testing.T) {
 }
 
 func TestTokenPersistsIfValidatorFails(t *testing.T) {
+	MockRedisServer()
 	client := New()
 	token := &Token{User: 3, Scenario: "email", Token: "persistent_token"}
 	client.Add(token, time.Minute)
@@ -86,4 +94,13 @@ func TestTokenPersistsIfValidatorFails(t *testing.T) {
 		t.Fatalf("Token has not persisted")
 		t.FailNow()
 	}
+}
+
+func MockRedisServer() *miniredis.Miniredis {
+	mr, err := miniredis.Run()
+	if err != nil {
+		panic(err)
+	}
+	os.Setenv("REDIS_HOST", mr.Addr())
+	return mr
 }
